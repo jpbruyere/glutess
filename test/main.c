@@ -16,11 +16,12 @@ void run_example(const double vertices_array[],
     tessellate(&coordinates_out, &nverts,
                &tris_out, &ntris,
                contours_array, contours_array + contours_size);
-
+	fprintf(stdout, "vert:");
     for (i=0; i<2 * nverts; ++i) {
         fprintf(stdout, "%g ", coordinates_out[i]);
     }
     fprintf(stdout, "\n");
+	fprintf(stdout, "tris:");
     for (i=0; i<3 * ntris; ++i) {
         fprintf(stdout, "%d ", tris_out[i]);
     }
