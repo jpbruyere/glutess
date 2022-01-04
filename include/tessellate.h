@@ -1,8 +1,9 @@
-typedef struct Vertex {
-    double pt[3];
-    int index;
-    struct Vertex *prev;
-} Vertex;
+#ifndef __tesselate_h__
+#define __tesselate_h__
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 void tessellate
     (double **verts,
@@ -11,3 +12,10 @@ void tessellate
      int *ntris,
      const double **contoursbegin, 
      const double **contoursend);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* __tesselate_h__ */
+

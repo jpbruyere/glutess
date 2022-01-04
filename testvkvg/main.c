@@ -21,7 +21,7 @@ static VkSampleCountFlags samples = VK_SAMPLE_COUNT_8_BIT;
 static uint32_t width=1024, height=768;
 static bool paused = false, refresh = true;
 static float scale = 1.0f;
-static int currentTri = 0;
+static int currentTri = -1;
 
 #define NORMAL_COLOR  "\x1B[0m"
 #define GREEN  "\x1B[32m"

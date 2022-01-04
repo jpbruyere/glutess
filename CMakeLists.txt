@@ -1,6 +1,7 @@
-cmake_minimum_required(VERSION 2.4)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.21)
 
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+set_directory_properties (PROPERTIES EXCLUDE_FROM_ALL true)
 
 project(glutess)
 
@@ -14,46 +15,50 @@ IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
 	ADD_DEFINITIONS (-DDEBUG)
 ENDIF ()
 
-add_library(glutess ${sources})
+IF (UNIX)
+	SET(LINKER_FLAGS "-lm")
+	SET(CMAKE_EXE_LINKER_FLAGS ${LINKER_FLAGS})
+	SET(CMAKE_SHARED_LINKER_FLAGS ${LINKER_FLAGS})
+ENDIF()
 
-add_executable(test "test/main.c")
+ADD_LIBRARY("${PROJECT_NAME}" STATIC ${sources})
 
-TARGET_INCLUDE_DIRECTORIES(test PRIVATE
-	"${CMAKE_CURRENT_SOURCE_DIR}/src"
+TARGET_INCLUDE_DIRECTORIES("${PROJECT_NAME}"
+	PUBLIC
+		"${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
-TARGET_LINK_LIBRARIES(test
+IF (BUILD_SHARED_LIBS)
+	TARGET_COMPILE_OPTIONS ("${PROJECT_NAME}" PUBLIC "-fPIC")
+ENDIF ()
+
+add_executable("${PROJECT_NAME}_test" "test/main.c")
+
+TARGET_LINK_LIBRARIES("${PROJECT_NAME}_test"
 	glutess
 )
 
-#FIND_PACKAGE(vkvg REQUIRED)
-#FIND_PACKAGE(vkh REQUIRED)
+FIND_PACKAGE(vkvg)
+FIND_PACKAGE(vkh)
 FIND_PACKAGE(Vulkan REQUIRED)
 FIND_PACKAGE(GLFW3 REQUIRED)
 
 FILE(GLOB vkvgsrc testvkvg/*.c)
 
-add_executable(vkvg ${vkvgsrc})
+if (vkvg_FOUND)
+	add_executable("${PROJECT_NAME}_vkvg" ${vkvgsrc})
 
-TARGET_INCLUDE_DIRECTORIES(vkvg PRIVATE
-	"${CMAKE_CURRENT_SOURCE_DIR}/src"
-	${Vulkan_INCLUDE_DIRS}
-	#${VKVG_INCLUDE_DIRS}
-	#${VKH_INCLUDE_DIRS}
-	/mnt/devel/vkvg-master/include/
-	/mnt/devel/vkvg-master/src/
-	/mnt/devel/vkvg-master/vkh/src/
-	/mnt/devel/vkvg-master/vkh/include/
-	${GLFW3_INCLUDE_DIR}
-)
-TARGET_LINK_LIBRARIES(vkvg
-	${Vulkan_LIBRARIES}
-	#${VKVG_LIBRARIES}
-	/mnt/devel/vkvg-master/build/libvkvg.so
-	/mnt/devel/vkvg-master/build/vkh/libvkh.so
-	#${VKH_LIBRARIES}
-	${GLFW3_LIBRARY}
-	m
-	glutess
-)
-
-
+	TARGET_INCLUDE_DIRECTORIES("${PROJECT_NAME}_vkvg" PRIVATE
+		${Vulkan_INCLUDE_DIRS}
+		${VKVG_INCLUDE_DIRS}
+		${VKH_INCLUDE_DIRS}
+		${GLFW3_INCLUDE_DIR}
+	)
+	TARGET_LINK_LIBRARIES("${PROJECT_NAME}_vkvg"
+		${Vulkan_LIBRARIES}
+		${VKVG_LIBRARIES}
+		${VKH_LIBRARIES}
+		${GLFW3_LIBRARY}
+		glutess
+		-lm
+	)
+ENDIF ()
