@@ -31,11 +31,17 @@ IF (BUILD_SHARED_LIBS)
 	TARGET_COMPILE_OPTIONS ("${PROJECT_NAME}" PUBLIC "-fPIC")
 ENDIF ()
 
-add_executable("${PROJECT_NAME}_test" "test/main.c")
+add_executable("${PROJECT_NAME}_test" "test/main.c" "test/common/tessellate.c")
 
 TARGET_LINK_LIBRARIES("${PROJECT_NAME}_test"
 	glutess
 )
+TARGET_INCLUDE_DIRECTORIES("${PROJECT_NAME}_test"
+	PRIVATE
+		"${CMAKE_CURRENT_SOURCE_DIR}/src"
+		"${CMAKE_CURRENT_SOURCE_DIR}/test/common"
+)
+
 
 FIND_PACKAGE(vkvg)
 FIND_PACKAGE(vkh)
@@ -45,9 +51,11 @@ FIND_PACKAGE(GLFW3 REQUIRED)
 FILE(GLOB vkvgsrc testvkvg/*.c)
 
 if (vkvg_FOUND)
-	add_executable("${PROJECT_NAME}_vkvg" ${vkvgsrc})
+	add_executable("${PROJECT_NAME}_vkvg" ${vkvgsrc} "test/common/tessellate.c")
 
 	TARGET_INCLUDE_DIRECTORIES("${PROJECT_NAME}_vkvg" PRIVATE
+		"${CMAKE_CURRENT_SOURCE_DIR}/test/common"
+		"${CMAKE_CURRENT_SOURCE_DIR}/src"
 		${Vulkan_INCLUDE_DIRS}
 		${VKVG_INCLUDE_DIRS}
 		${VKH_INCLUDE_DIRS}
