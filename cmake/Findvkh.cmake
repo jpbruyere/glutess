@@ -1,15 +1,15 @@
-find_path(VKH_INCLUDE_DIR vkh.h)
+find_path(vkh_INCLUDE_DIR vkh.h)
 
-find_library(VKH_LIBRARY NAMES vkh)
+find_library(vkh_LIBRARY NAMES vkh)
 
 # handle the QUIETLY and REQUIRED arguments and set VKHFOUND to TRUE if
 # all listed variables are TRUE
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(vkh DEFAULT_MSG
-  VKH_LIBRARY  VKH_INCLUDE_DIR)
+  vkh_LIBRARY  vkh_INCLUDE_DIR)
 
-if(VKH_FOUND)
-  set( VKH_LIBRARIES ${VKH_LIBRARY} )
+if(vkh_FOUND)
+  set( vkh_LIBRARIES ${vkh_LIBRARY} )
 endif()
 
-mark_as_advanced(VKH_INCLUDE_DIR VKH_LIBRARY VKH_LIBRARIES)
+mark_as_advanced(vkh_INCLUDE_DIR vkh_LIBRARY vkh_LIBRARIES)

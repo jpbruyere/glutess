@@ -1,7 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.21)
 
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-set_directory_properties (PROPERTIES EXCLUDE_FROM_ALL true)
 
 project(glutess)
 
@@ -21,52 +20,52 @@ IF (UNIX)
 	SET(CMAKE_SHARED_LINKER_FLAGS ${LINKER_FLAGS})
 ENDIF()
 
+GET_DIRECTORY_PROPERTY (glutess_has_root_project PARENT_DIRECTORY)
+
 ADD_LIBRARY("${PROJECT_NAME}" STATIC ${sources})
 
 TARGET_INCLUDE_DIRECTORIES("${PROJECT_NAME}"
 	PUBLIC
 		"${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
-IF (BUILD_SHARED_LIBS)
-	TARGET_COMPILE_OPTIONS ("${PROJECT_NAME}" PUBLIC "-fPIC")
-ENDIF ()
 
-add_executable("${PROJECT_NAME}_test" "test/main.c" "test/common/tessellate.c")
+IF (NOT glutess_has_root_project)
+	add_executable("${PROJECT_NAME}_test" "test/main.c" "test/common/tessellate.c")
 
-TARGET_LINK_LIBRARIES("${PROJECT_NAME}_test"
-	glutess
-)
-TARGET_INCLUDE_DIRECTORIES("${PROJECT_NAME}_test"
-	PRIVATE
-		"${CMAKE_CURRENT_SOURCE_DIR}/src"
-		"${CMAKE_CURRENT_SOURCE_DIR}/test/common"
-)
-
-
-FIND_PACKAGE(vkvg)
-FIND_PACKAGE(vkh)
-FIND_PACKAGE(Vulkan REQUIRED)
-FIND_PACKAGE(GLFW3 REQUIRED)
-
-FILE(GLOB vkvgsrc testvkvg/*.c)
-
-if (vkvg_FOUND)
-	add_executable("${PROJECT_NAME}_vkvg" ${vkvgsrc} "test/common/tessellate.c")
-
-	TARGET_INCLUDE_DIRECTORIES("${PROJECT_NAME}_vkvg" PRIVATE
-		"${CMAKE_CURRENT_SOURCE_DIR}/test/common"
-		"${CMAKE_CURRENT_SOURCE_DIR}/src"
-		${Vulkan_INCLUDE_DIRS}
-		${VKVG_INCLUDE_DIRS}
-		${VKH_INCLUDE_DIRS}
-		${GLFW3_INCLUDE_DIR}
-	)
-	TARGET_LINK_LIBRARIES("${PROJECT_NAME}_vkvg"
-		${Vulkan_LIBRARIES}
-		${VKVG_LIBRARIES}
-		${VKH_LIBRARIES}
-		${GLFW3_LIBRARY}
+	TARGET_LINK_LIBRARIES("${PROJECT_NAME}_test"
 		glutess
-		-lm
 	)
+	TARGET_INCLUDE_DIRECTORIES("${PROJECT_NAME}_test"
+		PRIVATE
+			"${CMAKE_CURRENT_SOURCE_DIR}/src"
+			"${CMAKE_CURRENT_SOURCE_DIR}/test/common"
+	)
+
+	FIND_PACKAGE(vkvg)
+	FIND_PACKAGE(vkh)
+	FIND_PACKAGE(Vulkan REQUIRED)
+	FIND_PACKAGE(GLFW3 REQUIRED)
+
+	FILE(GLOB vkvgsrc testvkvg/*.c)
+
+	if (vkvg_FOUND)
+		add_executable("${PROJECT_NAME}_vkvg" ${vkvgsrc} "test/common/tessellate.c")
+
+		TARGET_INCLUDE_DIRECTORIES("${PROJECT_NAME}_vkvg" PRIVATE
+			"${CMAKE_CURRENT_SOURCE_DIR}/test/common"
+			"${CMAKE_CURRENT_SOURCE_DIR}/src"
+			${Vulkan_INCLUDE_DIRS}
+			${vkvg_INCLUDE_DIRS}
+			${vkh_INCLUDE_DIRS}
+			${GLFW3_INCLUDE_DIR}
+		)
+		TARGET_LINK_LIBRARIES("${PROJECT_NAME}_vkvg"
+			${Vulkan_LIBRARIES}
+			${vkvg_LIBRARIES}
+			${vkh_LIBRARIES}
+			${GLFW3_LIBRARY}
+			glutess
+			"$<$<BOOL:${UNIX}>:-lm>"
+		)
+	ENDIF ()
 ENDIF ()
