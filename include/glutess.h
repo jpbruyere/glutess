@@ -38,8 +38,8 @@
    before counting on your grand designs.
    */
 
-#ifndef __glu_h__
-#define __glu_h__
+#ifndef __glutess_h__
+#define __glutess_h__
 
 #define GLAPIENTRYP *
 #undef GLAPIENTRY
@@ -370,4 +370,4 @@ GLAPI GLint GLAPIENTRY gluUnProject4 (GLdouble winX, GLdouble winY, GLdouble win
 }
 #endif
 
-#endif /* __glu_h__ */
+#endif /* __glutess_h__ */

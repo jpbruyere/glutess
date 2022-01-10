@@ -20,7 +20,6 @@ IF (UNIX)
 	SET(CMAKE_SHARED_LINKER_FLAGS ${LINKER_FLAGS})
 ENDIF()
 
-GET_DIRECTORY_PROPERTY (glutess_has_root_project PARENT_DIRECTORY)
 
 ADD_LIBRARY("${PROJECT_NAME}" STATIC ${sources})
 
@@ -28,6 +27,8 @@ TARGET_INCLUDE_DIRECTORIES("${PROJECT_NAME}"
 	PUBLIC
 		"${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
+
+GET_DIRECTORY_PROPERTY (glutess_has_root_project PARENT_DIRECTORY)
 
 IF (NOT glutess_has_root_project)
 	add_executable("${PROJECT_NAME}_test" "test/main.c" "test/common/tessellate.c")
@@ -41,8 +42,8 @@ IF (NOT glutess_has_root_project)
 			"${CMAKE_CURRENT_SOURCE_DIR}/test/common"
 	)
 
-	FIND_PACKAGE(vkvg)
-	FIND_PACKAGE(vkh)
+	FIND_PACKAGE(vkvg REQUIRED)
+	FIND_PACKAGE(vkh REQUIRED)
 	FIND_PACKAGE(Vulkan REQUIRED)
 	FIND_PACKAGE(GLFW3 REQUIRED)
 
@@ -69,3 +70,5 @@ IF (NOT glutess_has_root_project)
 		)
 	ENDIF ()
 ENDIF ()
+
+

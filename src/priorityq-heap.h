@@ -57,7 +57,7 @@
  * If the heap is empty, pqMinimum/pqExtractMin will return a NULL key.
  * This may also be tested with pqIsEmpty.
  */
-#define pqInit(pq)		__gl_pqHeapInit(pq)
+#define pqInit(pq)			__gl_pqHeapInit(pq)
 #define pqInsert(pq,key)	__gl_pqHeapInsert(pq,key)
 #define pqMinimum(pq)		__gl_pqHeapMinimum(pq)
 #define pqExtractMin(pq)	__gl_pqHeapExtractMin(pq)
